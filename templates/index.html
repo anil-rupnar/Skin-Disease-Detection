@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Skin Cancer Detector</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+        body {
+            font-family: "Roboto", sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+        }
+
+        .nav {
+            background-color: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+
+
+        .nav-left {
+            background-color: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .nav-left a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .nav-right h2 {
+            color: #000;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 600;
+
+        }
+
+        .bg-image {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            padding: 250px;
+            background-image: url("https://www.visitcompletecare.com/wp-content/uploads/2019/10/Skin-Infections.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+
+        .center {
+            max-width: 600px;
+            width: 400px;
+            top: 50%;
+            margin: auto;
+            margin-top: -100px;
+            background-color: #fff;
+            padding: 30px;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 30px;
+            z-index: 5;
+        }
+
+
+
+        #file-ip-1-preview {
+            max-width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            object-fit: contain;
+        }
+
+        label {
+            display: block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn-prev {
+            background-color: #28a745;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+            width: 100%;
+        }
+
+        #progressBar {
+            width: 100%;
+            height: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        #status {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <div class="nav-right">
+            <h2 href="#">Skin Disease Detection
+            </h2>
+        </div>
+        <div class="nav-left">
+            <a href="/">Home</a>
+            <a href="#" target="_blank">Contact Us</a>
+        </div>
+    </div>
+
+    <div class="bg-image">
+        <!-- <img src="https://post.healthline.com/wp-content/uploads/2022/09/skin-diversity-1296-728-header.jpg" alt="bg-image"> -->
+
+        <div class="center">
+            <form id="upload-file" action="/predict" method="POST" enctype="multipart/form-data">
+
+                <div class="form-input">
+                    <div class="preview">
+                        <img id="file-ip-1-preview">
+                    </div>
+
+                    <label for="file-ip-1" onclick="triggerFileInput()">Upload Images</label>
+                    <input type="file" name="file" id="file-ip-1" accept="image/*" onchange="showPreview(event);">
+                    <input type="submit" class="btn-prev" id="btn-display" name="submit" onclick="start(0)"
+                        value="Predict">
+                    <progress id="progressBar" class="pro-prev" value="0" max="100"></progress>
+                    <span id="status"></span>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        function showPreview(event) {
+            if (event.target.files.length > 0) {
+                var src = URL.createObjectURL(event.target.files[0]);
+                var preview = document.getElementById("file-ip-1-preview");
+                var prevbtn = document.getElementById("btn-display");
+                var progressBar = document.getElementById("progressBar");
+                var bgImage = document.querySelector(".bg-image");
+
+                preview.src = src;
+                preview.style.display = "block";
+                prevbtn.style.display = "block";
+                progressBar.style.display = "block";
+                bgImage.style.backgroundImage = "none";
+            }
+        }
+
+        // function triggerFileInput(event) {
+        //     event.preventDefault();
+        //     document.getElementById("file-ip-1").click();
+        // }
+
+        function start(al) {
+            var bar = document.getElementById('progressBar');
+            var status = document.getElementById('status');
+            status.innerHTML = al + "%";
+            bar.value = al;
+            al++;
+            var sim = setTimeout("start(" + al + ")", 1);
+            if (al == 100) {
+                status.innerHTML = "100%";
+                bar.value = 100;
+                clearTimeout(sim);
+                var finalMessage = document.getElementById('finalMessage');
+                finalMessage.innerHTML = "Process is complete";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
